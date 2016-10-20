@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/kalmduck/algorithms/backtrack"
 )
@@ -14,9 +13,6 @@ var n int
 // the queen in that row occupies.
 type Board []int
 
-var _ backtrack.Problem = (Board)(nil)
-var _ backtrack.Position = (*Square)(nil)
-
 func posToSquare(pos backtrack.Position) Square {
 	s, ok := pos.(Square)
 	if !ok {
@@ -25,22 +21,47 @@ func posToSquare(pos backtrack.Position) Square {
 	return s
 }
 
+func (b Board) String() string {
+	var s string
+	s += "\n"
+	for i := 0; i < n; i++ {
+		s += "|"
+		for j := 0; j < n; j++ {
+			if b[i]-1 == j {
+				s += "Q"
+			} else {
+				s += "+"
+			}
+			s += "|"
+		}
+		s += "\n"
+	}
+	return s
+}
+
 func (b Board) Valid(pos backtrack.Position) bool {
 	s := posToSquare(pos)
 	for i := 0; i < s.r; i++ { // for every row that has a queen so far
-		if b[i] == s.c+1 { // this column is already covered
-			fmt.Println("covered column", s)
-			fmt.Println(b)
+		if b[i]-1 == s.c { // this column is already covered
 			return false
 		}
-		if math.Abs(float64(b[i]-b[s.r])) == math.Abs(float64((i)-(s.r))) {
+		if checkDiag(i, b[i]-1, s.r, s.c) {
 			// should cover the diags
-			fmt.Println("covered diag", s)
-			fmt.Println(b)
 			return false
 		}
 	}
 	return true
+}
+
+func checkDiag(qr, qc, r, c int) bool {
+	var rowDiff, colDiff int
+	if rowDiff = r - qr; rowDiff < 0 {
+		rowDiff = -rowDiff
+	}
+	if colDiff = c - qc; colDiff < 0 {
+		colDiff = -colDiff
+	}
+	return rowDiff == colDiff
 }
 
 func (b Board) Record(pos backtrack.Position) {
@@ -79,7 +100,7 @@ func (s Square) NextPos() backtrack.Position {
 }
 
 func main() {
-	n = 4
+	n = 16
 	b := make(Board, n)
 	tracker := backtrack.New(b)
 	var p backtrack.Position
@@ -89,6 +110,4 @@ func main() {
 	} else {
 		fmt.Println("no solution: ", b)
 	}
-	fmt.Println(p)
-	fmt.Println(b)
 }
