@@ -62,6 +62,10 @@ func (b Board) Valid(pos backtrack.Position) bool {
 	return true
 }
 
+// checkDiag compares the position of the a queen (qr, qc) with the position
+// we're thinking about placing a queen (r, c).  If abs(r-qr) == abs(c-qc),
+// the position we're considering is on the diagonal with a queen and can't
+// be used.
 func checkDiag(qr, qc, r, c int) bool {
 	var rowDiff, colDiff int
 	if rowDiff = r - qr; rowDiff < 0 { // abs
