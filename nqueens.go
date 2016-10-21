@@ -127,8 +127,7 @@ func main() {
 	n = 16
 	b := make(Board, n)
 	tracker := backtrack.New(b)
-	var p backtrack.Position
-	p = Square{0, 0}
+	p := backtrack.Position(Square{0, 0})
 	if tracker.Solve(p) {
 		fmt.Println("Found solution: ", b)
 	} else {
